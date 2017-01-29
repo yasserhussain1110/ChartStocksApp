@@ -1,5 +1,8 @@
 const express = require('express');
 const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+
 
 if (process.env.NODE_ENV === "production") {
   console.log("Running In Production");
@@ -27,8 +30,14 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+const StockController = require('./controllers/StockController');
+
+app.get('/api/stocks', StockController.allStocks);
+app.post('/api/addStock', (req, res)=>StockController.addStock(io, req, res));
+app.post('/api/removeStock', (req, res)=>StockController.removeStock(io, req, res));
 
 
-app.listen(process.env.PORT || 8080);
-
+http.listen(process.env.PORT || 8080, function(){
+  console.log('Server Started On ' + process.env.PORT);
+});
 

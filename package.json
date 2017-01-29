@@ -16,7 +16,6 @@
     "fcc",
     "webpack",
     "react",
-    "redux",
     "express",
     "mongo",
     "node"
@@ -41,16 +40,22 @@
     "webpack-dev-server": "^1.16.2",
     "webpack-hot-middleware": "^2.15.0",
     "webpack-merge": "^0.14.1",
+    "dotenv": "^4.0.0",
     "webpack-validator": "^2.2.9"
   },
   "dependencies": {
     "body-parser": "^1.16.0",
     "connect-loki": "^1.0.9",
-    "dotenv": "^4.0.0",
     "express-session": "^1.15.0",
+    "highcharts": "^5.0.7",
+    "jquery": "^3.1.1",
+    "jsdom": "^9.9.1",
     "mongodb": "^2.2.22",
     "per-env": "^1.0.2",
     "react": "^15.3.2",
-    "react-dom": "^15.3.2"
+    "react-dom": "^15.3.2",
+    "socket.io": "^1.7.2",
+    "socket.io-client": "^1.7.2",
+    "superagent": "^3.4.0"
   }
 }

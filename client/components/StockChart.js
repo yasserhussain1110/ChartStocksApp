@@ -1,5 +1,5 @@
 import React from 'react';
 
 export default () => (
-  <div className="chart"></div>
+  <div id="chart" className="chart"></div>
 );

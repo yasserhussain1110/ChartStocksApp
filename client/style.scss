@@ -1,4 +1,4 @@
-$primary-color: white;
+$primary-color: #231F20;
 
 * {
   margin: 0;
@@ -10,3 +10,139 @@ body {
   text-align: center;
 }
 
+.chart {
+  width: 1000px;
+  height: 400px;
+  text-align: center;
+  margin: 50px auto 30px auto;
+  background-color: white;
+}
+
+.stock-holder {
+  width: 1000px;
+  margin: auto;
+}
+
+.stock {
+  background-color: #097054;
+  margin: 5px;
+  padding: 10px;
+  font-size: 1.5em;
+  border: 2px solid #784077;
+  border-radius: 5px;
+  color: orange;
+  position: relative;
+  width: 125px;
+  display: inline-block;
+}
+
+.delete {
+  font-size: 0.4em;
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  padding: 4px;
+  background-color: cornflowerblue;
+  opacity: 0.7;
+  color: white;
+  border-radius: 2px;
+  box-shadow: 2px 2px darkblue;
+  border: none;
+  outline: none;
+}
+
+.delete:hover {
+  background-color: cadetblue;
+  cursor: pointer;
+  color: black;
+}
+
+.delete:active {
+  top: 3px;
+  right: 2px;
+  background-color: darkblue;
+  color: white;
+  outline: none;
+  box-shadow: none;
+}
+
+.new-stock {
+  margin-top: 40px;
+  width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.new-stock-form {
+  background-color: gray;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.new-stock-form > * {
+  margin: 5px;
+}
+
+.new-stock-form > input {
+  height: 30px;
+  width: 175px;
+  border-radius: 5px;
+  font-size: 1.2em;
+  padding: 5px;
+}
+
+.new-stock-form > input:focus, .new-stock-form > input:hover {
+  outline: none;
+}
+
+.new-stock-form > button {
+  height: 40px;
+  width: 100px;
+  background-color: #449D44;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-size: 1.1em;
+}
+
+.new-stock-form > button:hover {
+  background-color: green;
+  cursor: pointer;
+}
+
+.new-stock-form > button:focus {
+  outline: none;
+}
+
+.new-stock-form > button:active {
+  outline: none;
+  box-shadow: inset 0 8px 6px -6px black;
+}
+
+.new-stock-form h3 {
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+
+footer {
+  margin-top: 40px;
+  margin-bottom: 50px;
+  font-size: 0.9em;
+  color: white;
+}
+
+footer > a {
+  text-decoration: none;
+  color: white;
+}
+
+footer > a:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+footer > * {
+  margin: 0 5px;
+}
