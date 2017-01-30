@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Index from './Index';
 import UpdateStockChart from '../lib/UpdateStockChart';
-import {asyncGet, asyncPost} from '../serverInteraction/makeServerRequest';
+import {asyncGet} from '../serverInteraction/makeServerRequest';
 import io from 'socket.io-client';
 
 class App extends Component {
@@ -9,41 +9,50 @@ class App extends Component {
     super(props, context);
 
     this.state = {
-      stockNames: []
+      stocks: []
     };
 
     this.addStock = this.addStock.bind(this);
     this.removeStock = this.removeStock.bind(this);
     this.fetchAvailableStocks();
 
-    this.socket = io();
+    this.socket = io.connect({transports: ['websocket', 'polling']});
     this.setUpSocketEvents();
   }
 
   setUpSocketEvents() {
-    this.socket.on('stockAdded', newStock => {
-      let allStockNames = [...this.state.stockNames, newStock];
+    this.socket.on('stockAdded', newStockObj => {
+      let allStocks = [...this.state.stocks, newStockObj];
       this.setState({
-        stockNames: allStockNames
+        stocks: allStocks
       });
 
-      UpdateStockChart(allStockNames);
+      UpdateStockChart(allStocks);
     });
+    /*
+     this.socket.on('stockAdded', newStock => {
+     let allStockNames = [...this.state.stockNames, newStock];
+     this.setState({
+     stockNames: allStockNames
+     });
 
-    this.socket.on('stockRemoved', stockRemoved => {
-      let stockPosition = this.state.stockNames.indexOf(stockRemoved);
-      debugger;
-      if (stockPosition > -1) {
-        let allStockNames = [...this.state.stockNames.slice(0, stockPosition),
-          ...this.state.stockNames.splice(stockPosition + 1)];
+     UpdateStockChart(allStockNames);
+     });
 
-        this.setState({
-          stockNames: allStockNames
-        });
+     this.socket.on('stockRemoved', stockRemoved => {
+     let stockPosition = this.state.stockNames.indexOf(stockRemoved);
+     if (stockPosition > -1) {
+     let allStockNames = [...this.state.stockNames.slice(0, stockPosition),
+     ...this.state.stockNames.splice(stockPosition + 1)];
 
-        UpdateStockChart(allStockNames);
-      }
-    });
+     this.setState({
+     stockNames: allStockNames
+     });
+
+     UpdateStockChart(allStockNames);
+     }
+     });
+     */
   }
 
   fetchAvailableStocks() {
@@ -63,27 +72,11 @@ class App extends Component {
   }
 
   addStock(stockName) {
-    asyncPost('/api/addStock', {stockName},
-      apiRes => {
-        console.log(apiRes);
-      },
-
-      apiRes => {
-        console.log(apiRes);
-      }
-    );
+    this.socket.emit("addStock", stockName);
   }
 
   removeStock(stockName) {
-    asyncPost('/api/removeStock', {stockName},
-      apiRes => {
-        console.log(apiRes);
-      },
-
-      apiRes => {
-        console.log(apiRes);
-      }
-    );
+    this.socket.emit("removeStock", stockName);
   }
 
   render() {
@@ -91,7 +84,7 @@ class App extends Component {
       <Index
         removeStock={this.removeStock}
         addStock={this.addStock}
-        presentStocks={this.state.stockNames}
+        presentStocks={this.state.stocks}
       />
     );
   }

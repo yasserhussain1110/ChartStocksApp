@@ -1,9 +1,9 @@
 import React from 'react';
 
 export default ({presentStocks, removeStock}) => (
-  <div className="stock-holder">{presentStocks.map(stockName=>(
-    <div key={stockName} className="stock">{stockName}
-      <button onClick={removeStock.bind(null, stockName)} className="delete">X</button>
+  <div className="stock-holder">{presentStocks.map(stock=>(
+    <div key={stock.code} className="stock">{stock.code}
+      <button onClick={removeStock.bind(null, stock.code)} className="delete">X</button>
     </div>))}
   </div>
 );

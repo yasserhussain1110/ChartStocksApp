@@ -33,11 +33,28 @@ app.use(bodyParser.urlencoded({
 const StockController = require('./controllers/StockController');
 
 app.get('/api/stocks', StockController.allStocks);
-app.post('/api/addStock', (req, res)=>StockController.addStock(io, req, res));
-app.post('/api/removeStock', (req, res)=>StockController.removeStock(io, req, res));
 
 
-http.listen(process.env.PORT || 8080, function(){
+io.on('connection', function (socket) {
+  socket.on('addStock', function (stockName) {
+    console.log("Got addStock " + stockName);
+    StockController.addStock(stockName,
+      (stockObj) => io.emit("stockAdded", stockObj));
+  });
+});
+
+//app.post('/api/addStock', (req, res)=>StockController.addStock(io, req, res));
+//app.post('/api/removeStock', (req, res)=>StockController.removeStock(io, req, res));
+
+
+http.listen(process.env.PORT || 8080, function () {
   console.log('Server Started On ' + process.env.PORT);
 });
 
+
+/*
+ https://www.quandl.com/api/v3/datasets/XNAS/AMZN.json?api_key=Q8myS4W6HyQ9M8HgRSXp
+ https://www.quandl.com/api/v3/datasets/XNAS/FB/metadata.json
+ https://www.quandl.com/api/v3/databases.json?query=amzn
+ https://www.quandl.com/api/v3/datasets.json?query=google&database_code=XNAS
+ */

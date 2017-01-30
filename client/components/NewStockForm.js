@@ -15,7 +15,7 @@ class NewStockForm extends Component {
   getNewStock(e) {
     e.preventDefault();
     if (!!this.state.stockInput) {  // stockInput is not empty
-      this.props.addStock(this.state.stockInput);
+      this.props.addStock(this.state.stockInput.toLowerCase());
     }
   }
 
