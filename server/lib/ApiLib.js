@@ -26,7 +26,7 @@ function searchForRequestedStock(stockName, successCallBack, failureCallBack) {
 }
 
 function trySearchingStockInApiDB(stockName, successCallBack, failureCallBack) {
-  request.get("https://www.quandl.com/api/v3/datasets.json?query=" + stockName + "&per_page=20&database_code=WIKI&api_key=" + process.env.QUANDAL_API_KEY)
+  request.get("https://www.quandl.com/api/v3/datasets.json?query=" + stockName + "&database_code=WIKI&api_key=" + process.env.QUANDAL_API_KEY)
     .end(function (err, res) {
       if (err) {
         console.log(err);
@@ -77,7 +77,7 @@ function findUsableDataset(stockName, datasets, successCallBack, failureCallBack
           }
         });
     }
-  }), 50);
+  }), 0);
 }
 
 
