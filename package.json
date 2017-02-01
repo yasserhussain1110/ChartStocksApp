@@ -22,7 +22,7 @@
   ],
   "author": "Yasser Hussain",
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
     "babel-cli": "^6.18.0",
     "babel-core": "^6.18.0",
     "babel-loader": "^6.2.7",
@@ -41,9 +41,7 @@
     "webpack-hot-middleware": "^2.15.0",
     "webpack-merge": "^0.14.1",
     "dotenv": "^4.0.0",
-    "webpack-validator": "^2.2.9"
-  },
-  "dependencies": {
+    "webpack-validator": "^2.2.9",
     "body-parser": "^1.16.0",
     "connect-loki": "^1.0.9",
     "express-session": "^1.15.0",
