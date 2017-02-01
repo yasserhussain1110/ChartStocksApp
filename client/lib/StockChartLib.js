@@ -5,7 +5,7 @@ Highcharts.setOptions(Theme);
 
 const updateStockChart = (allSeriesOptions) => {
   allSeriesOptions.forEach(s => {
-    s.color = randomColor();
+    s.color = randomColor({luminosity: 'dark'});
   });
   Options.series = allSeriesOptions;
   Highcharts.stockChart('chart', Options);
