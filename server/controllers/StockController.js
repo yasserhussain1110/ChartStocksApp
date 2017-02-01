@@ -1,30 +1,27 @@
 const mongo = require('mongodb').MongoClient;
-const {getStockDataFromApi, searchForRequestedStock} = require('../lib/ApiLib');
+const {searchForRequestedStock} = require('../lib/ApiLib');
 
 const dbUrl = process.env.DATABASE_URL;
 
+
+// db.members.createIndex( { "code": 1 }, { unique: true } )
+
+
 module.exports = {
   allStocks: allStocks,
-  addStock: addStock
-  //removeStock: removeStock
+  addStock: addStock,
+  removeStock: removeStock
 };
 
 function allStocks(req, res) {
   mongo.connect(dbUrl, function (err, db) {
     const stocksCollection = db.collection("stocksCollection");
-    stocksCollection.find({}, {_id: 0, code: 1}).toArray(function (err, results) {
-
-      console.log(results);
-
+    stocksCollection.find({}, {_id: 0}).toArray(function (err, results) {
       if (err) {
         console.log(err);
-      } else if (results.length === 0) {
-        res.json([]);
+        res.status(400).json({error: "DB Error"});
       } else {
-        getStockDataFromApi(results,
-          stocks=>res.status(200).json(stocks),
-          stocks=>console.log(stocks)
-        );
+        res.status(200).json(results);
       }
       db.close();
     });
@@ -38,77 +35,35 @@ function addStock(stockName, sendStockDataCallBack) {
   }
 
   searchForRequestedStock(stockName,
-    (stock) =>foundStockInApi(stock, sendStockDataCallBack),
+    (stock) =>insertStockInDatabase(stock, sendStockDataCallBack),
     (err) => console.log("not found " + stockName)
   );
 }
 
-function foundStockInApi(stock, sendStockDataCallBack) {
-  insertStockInDatabase(stock.code, ()=>sendStockDataCallBack(stock));
-}
+function removeStock(code, sendStockDataCallBack) {
+  if (!code || !code.trim()) {
+    console.log("stock code cannot be empty " + stockName);
+    return;
+  }
 
-
-function insertStockInDatabase(stockCode, insertionSuccessfulCallback) {
   mongo.connect(dbUrl, function (err, db) {
     const stocksCollection = db.collection("stocksCollection");
-    stocksCollection.insertOne({code: stockCode}).then(insertionSuccessfulCallback).catch(function (e) {
-      console.log(e);
+    stocksCollection.deleteOne({code: code}).then(function () {
+      sendStockDataCallBack();
+    }).catch(e=> {
+      console.log(e)
     });
     db.close();
   });
 }
 
 
-/*
- function removeStock(io, req, res) {
-
- let stockName = req.body.stockName.toLowerCase();
-
- if (!stockName || !stockName.trim()) {
- res.status(400).json({
- errors: "'stockName' cannot be empty"
- });
- return;
- }
-
- mongo.connect(dbUrl, function (err, db) {
- const stocksCollection = db.collection("stocksCollection");
-
- Note: // USE FORM:- stocksCollection.deleteOne({name: stockName}).then().catch()
- try {
- stocksCollection.deleteOne({name: stockName}).then(function (result) {
- if (result.deletedCount === 1) {
- res.status(200).json({status: "deleted"});
- io.emit('stockRemoved', stockName);
- } else {
- console.log(result);
- res.status(404).json({status: "not found"});
- }
-
- });
- } catch (e) {
- console.log(e);
- res.status(404).json({status: "not found"});
- }
- db.close();
- });
- }
-
-
- function onStockFoundInRemoteApi(dbUrl, stockName, res, io) {
- mongo.connect(dbUrl, function (err, db) {
- const stocksCollection = db.collection("stocksCollection");
-
- Note: // USE FORM:- stocksCollection.deleteOne({name: stockName}).then().catch()
- try {
- stocksCollection.insertOne({name: stockName});
- res.status(200).json({status: "added"});
- io.emit('stockAdded', stockName);
- } catch (e) {
- console.log(e);
- res.status(500).json({status: "error"});
- }
- db.close();
- });
- }
- */
+function insertStockInDatabase(stock, sendStockDataCallBack) {
+  mongo.connect(dbUrl, function (err, db) {
+    const stocksCollection = db.collection("stocksCollection");
+    stocksCollection.insertOne(stock).then(() => sendStockDataCallBack(stock)).catch(function (e) {
+      console.log(e);
+    });
+    db.close();
+  });
+}

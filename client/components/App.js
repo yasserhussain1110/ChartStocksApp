@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Index from './Index';
-import UpdateStockChart from '../lib/UpdateStockChart';
+import updateStockChart from '../lib/StockChartLib';
 import {asyncGet} from '../serverInteraction/makeServerRequest';
 import io from 'socket.io-client';
 
@@ -16,8 +16,13 @@ class App extends Component {
     this.removeStock = this.removeStock.bind(this);
     this.fetchAvailableStocks();
 
-    this.socket = io.connect({transports: ['websocket', 'polling']});
+    this.socket = io.connect();
     this.setUpSocketEvents();
+    this.findIndexOf = this.findIndexOf.bind(this);
+  }
+
+  findIndexOf(code) {
+    return this.state.stocks.map(stock => stock.code).indexOf(code);
   }
 
   setUpSocketEvents() {
@@ -27,41 +32,31 @@ class App extends Component {
         stocks: allStocks
       });
 
-      UpdateStockChart(allStocks);
+      updateStockChart(allStocks);
     });
-    /*
-     this.socket.on('stockAdded', newStock => {
-     let allStockNames = [...this.state.stockNames, newStock];
-     this.setState({
-     stockNames: allStockNames
-     });
 
-     UpdateStockChart(allStockNames);
-     });
+    this.socket.on('stockRemoved', code => {
+      console.log(code);
 
-     this.socket.on('stockRemoved', stockRemoved => {
-     let stockPosition = this.state.stockNames.indexOf(stockRemoved);
-     if (stockPosition > -1) {
-     let allStockNames = [...this.state.stockNames.slice(0, stockPosition),
-     ...this.state.stockNames.splice(stockPosition + 1)];
+      let stockIndex = this.findIndexOf(code);
+      let allStocks = [...this.state.stocks.slice(0, stockIndex),
+        ...this.state.stocks.slice(stockIndex + 1)];
 
-     this.setState({
-     stockNames: allStockNames
-     });
+      this.setState({
+        stocks: allStocks
+      });
 
-     UpdateStockChart(allStockNames);
-     }
-     });
-     */
+      updateStockChart(allStocks);
+    });
   }
 
   fetchAvailableStocks() {
     asyncGet('/api/stocks',
       apiRes => {
-        let allStockNames = apiRes;
-        if (allStockNames.length > 0) {
-          this.setState({stockNames: allStockNames});
-          UpdateStockChart(allStockNames);
+        let stocks = apiRes;
+        if (stocks.length > 0) {
+          this.setState({stocks: stocks});
+          updateStockChart(stocks);
         }
       },
 
@@ -75,8 +70,8 @@ class App extends Component {
     this.socket.emit("addStock", stockName);
   }
 
-  removeStock(stockName) {
-    this.socket.emit("removeStock", stockName);
+  removeStock(code) {
+    this.socket.emit("removeStock", code);
   }
 
   render() {

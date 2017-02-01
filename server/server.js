@@ -37,15 +37,15 @@ app.get('/api/stocks', StockController.allStocks);
 
 io.on('connection', function (socket) {
   socket.on('addStock', function (stockName) {
-    console.log("Got addStock " + stockName);
     StockController.addStock(stockName,
       (stockObj) => io.emit("stockAdded", stockObj));
   });
+
+  socket.on('removeStock', function (code) {
+    StockController.removeStock(code,
+      () => io.emit("stockRemoved", code));
+  });
 });
-
-//app.post('/api/addStock', (req, res)=>StockController.addStock(io, req, res));
-//app.post('/api/removeStock', (req, res)=>StockController.removeStock(io, req, res));
-
 
 http.listen(process.env.PORT || 8080, function () {
   console.log('Server Started On ' + process.env.PORT);
