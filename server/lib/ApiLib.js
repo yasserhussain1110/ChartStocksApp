@@ -17,7 +17,8 @@ function searchForRequestedStock(stockName, successCallBack, failureCallBack) {
         successCallBack(massageQuandlDataForHighchart({
           name: apiRes.dataset.name,
           code: apiRes.dataset.dataset_code,
-          data: apiRes.dataset.data
+          data: apiRes.dataset.data,
+          desc: apiRes.dataset.name.replace(/prices.*/i, "")
         }));
       } else {
         trySearchingStockInApiDB(stockName, successCallBack, failureCallBack);
@@ -68,7 +69,8 @@ function findUsableDataset(stockName, datasets, successCallBack, failureCallBack
             successCallBack(massageQuandlDataForHighchart({
               name: apiRes.dataset.name,
               code: apiRes.dataset.dataset_code,
-              data: apiRes.dataset.data
+              data: apiRes.dataset.data,
+              desc: apiRes.dataset.name.replace(/prices.*/i, "")
             }));
           }
 
