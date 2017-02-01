@@ -4,7 +4,7 @@ const {searchForRequestedStock} = require('../lib/ApiLib');
 const dbUrl = process.env.DATABASE_URL;
 
 
-// db.members.createIndex( { "code": 1 }, { unique: true } )
+// db.chartstocks.createIndex( { "code": 1 }, { unique: true } )
 
 
 module.exports = {
