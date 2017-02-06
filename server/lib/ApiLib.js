@@ -30,7 +30,6 @@ function trySearchingStockInApiDB(stockName, successCallBack, failureCallBack) {
   request.get("https://www.quandl.com/api/v3/datasets.json?query=" + stockName + "&database_code=WIKI&api_key=" + process.env.QUANDAL_API_KEY)
     .end(function (err, res) {
       if (err) {
-        console.log(err);
         return;
       }
 
@@ -47,39 +46,47 @@ function trySearchingStockInApiDB(stockName, successCallBack, failureCallBack) {
 
 function findUsableDataset(stockName, datasets, successCallBack, failureCallBack) {
 
-  var foundRelevantStock = false, counter = 0;
+  let counter = 0;
 
-  datasets.forEach(throttle(function (dataset) {
-    if (!foundRelevantStock) {
-      request.get("https://www.quandl.com/api/v3/datasets/WIKI/" + dataset.dataset_code + ".json?api_key=" + process.env.QUANDAL_API_KEY)
-        .end(function (err, res) {
+  function fetchStock(stockCode) {
+    request.get("https://www.quandl.com/api/v3/datasets/WIKI/" + stockCode + ".json?api_key=" + process.env.QUANDAL_API_KEY)
+      .end(function (err, res) {
+        counter++;
 
-          counter++;
+        if (err) {
+          console.log("error getting " + dataset.dataset_code);
+          console.log(err);
 
-          if (err) {
-            console.log("error getting " + dataset.dataset_code);
-            console.log(err);
-            return;
-          }
-
-          var apiRes = res.body;
-
-          if (apiRes.dataset && apiRes.dataset.data && apiRes.dataset.data.length > 0) {
-            foundRelevantStock = true;
-            successCallBack(massageQuandlDataForHighchart({
-              name: apiRes.dataset.name,
-              code: apiRes.dataset.dataset_code,
-              data: apiRes.dataset.data,
-              desc: apiRes.dataset.name.replace(/prices.*/i, "")
-            }));
-          }
-
-          if (counter === datasets.length && !foundRelevantStock) {
+          if (counter < datasets.length) {
+            fetchStock(datasets[counter].dataset_code);
+          } else {
             failureCallBack(stockName);
           }
-        });
-    }
-  }), 0);
+
+          return;
+        }
+
+        var apiRes = res.body;
+
+        if (apiRes.dataset && apiRes.dataset.data && apiRes.dataset.data.length > 0) {
+          successCallBack(massageQuandlDataForHighchart({
+            name: apiRes.dataset.name,
+            code: apiRes.dataset.dataset_code,
+            data: apiRes.dataset.data,
+            desc: apiRes.dataset.name.replace(/prices.*/i, "")
+          }));
+          return;
+        }
+
+        if (counter < datasets.length) {
+          fetchStock(datasets[counter].dataset_code);
+        } else {
+          failureCallBack(stockName);
+        }
+      })
+  }
+
+  fetchStock(datasets[counter].dataset_code);
 }
 
 
