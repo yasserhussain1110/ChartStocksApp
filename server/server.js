@@ -50,11 +50,3 @@ io.on('connection', function (socket) {
 http.listen(process.env.PORT || 8080, function () {
   console.log('Server Started On ' + process.env.PORT);
 });
-
-
-/*
- https://www.quandl.com/api/v3/datasets/XNAS/AMZN.json?api_key=Q8myS4W6HyQ9M8HgRSXp
- https://www.quandl.com/api/v3/datasets/XNAS/FB/metadata.json
- https://www.quandl.com/api/v3/databases.json?query=amzn
- https://www.quandl.com/api/v3/datasets.json?query=google&database_code=XNAS
- */
